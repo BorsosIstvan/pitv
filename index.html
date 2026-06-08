@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mijn TV App</title>
     <link rel="manifest" href="/pitv/manifest.json">
-    <script src="https://jsdelivr.net"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         video { width: 80%; max-width: 800px; border: 2px solid #333; }
@@ -16,7 +15,11 @@
 </head>
 <body>
     <h1>Mijn Stream App</h1>
-    <video id="video" controls></video>
+    <video id="video" controls autoplay width="100%">
+        <source src="HIER_JE_M3U8_LINK_INVULLEN" type="application/x-mpegURL">
+        Je browser ondersteunt geen HLS-streams.
+    </video>
+
 
     <div class="channels">
         <button onclick="playStream('https://livestreamlinks.net/onlinetv/hungary/filmplus')">Zender 1</button>
