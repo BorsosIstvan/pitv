@@ -1,7 +1,7 @@
 {
   "name": "Mijn Pi TV",
   "short_name": "PiTV",
-  "start_url": "/",
+  "start_url": "/pitv/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
