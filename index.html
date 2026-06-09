@@ -3,47 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mijn TV App (VLC)</title>
+    <title>Mijn TV App (VLC-Lijst)</title>
     <link rel="manifest" href="/pitv/manifest.json">
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
         .channels { margin-top: 20px; display: flex; flex-direction: column; align-items: center; }
         button { padding: 15px 30px; margin: 10px; font-size: 20px; cursor: pointer; background: #222; color: #fff; border: 2px solid #444; width: 300px; border-radius: 8px; }
-        button:focus { background: orange; color: black; border-color: #fff; outline: none; } /* TV-focus */
+        button:focus { background: orange; color: black; border-color: #fff; outline: none; }
     </style>
 </head>
 <body>
     <h1>Mijn Stream App</h1>
-    <p>Klik op een zender om VLC Player te openen</p>
+    <p>Selecteer een zender om te openen in VLC</p>
     
     <div class="channels">
-        <!-- Knop 1: Jouw eigen stream -->
-        <button onclick="playInVLC('http://smart-hdip.com')">
-            Lava 1 Stream
-        </button>
-        
-        <!-- Knop 2: Apple Test Stream -->
-        <button onclick="playInVLC('https://apple.com')">
-            Apple Test Stream
-        </button>
-
-        <!-- Knop 3: YouTube link (VLC kan dit vaak vertalen) -->
-        <button onclick="playInVLC('https://youtube.com')">
-            M1 Híradó (YouTube)
-        </button>
+        <button onclick="downloadM3U('Lava 1', 'http://smart-hdip.com')">Lava 1 Stream</button>
+        <button onclick="downloadM3U('Apple Test', 'https://apple.com')">Apple Test Stream</button>
+        <button onclick="downloadM3U('M1 Hirado', 'https://youtube.com')">M1 Híradó</button>
     </div>
 
     <script>
-        function playInVLC(streamUrl) {
-            // We vervangen 'http://' of 'https://' simpelweg door 'vlc://'
-            // Dit snapt elke browser en stuurt de link direct door naar de VLC app
-            var vlcUrl = streamUrl.replace(/^https?:\/\//, "vlc://");
+        function downloadM3U(name, url) {
+            // We bouwen een virtueel IPTV bestand (M3U) op in het geheugen
+            var m3uContent = "#EXTM3U\n#EXTINF:-1," + name + "\n" + url;
+            var blob = new Blob([m3uContent], { type: "audio/x-mpegurl" });
             
-            // Open de link
-            window.location.href = vlcUrl;
+            // Maak een onzichtbare downloadlink aan
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = name + ".m3u";
+            
+            // Klik er automatisch op
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
-        // Service Worker registreren voor PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/pitv/sw.js');
         }
