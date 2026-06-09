@@ -9,12 +9,12 @@
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
         .channels { margin-top: 20px; display: flex; flex-direction: column; align-items: center; }
         button { padding: 15px 30px; margin: 10px; font-size: 20px; cursor: pointer; background: #222; color: #fff; border: 2px solid #444; width: 300px; border-radius: 8px; }
-        button:focus { background: orange; color: black; border-color: #fff; outline: none; } /* Oranje VLC-kleur voor TV-focus */
+        button:focus { background: orange; color: black; border-color: #fff; outline: none; } /* TV-focus */
     </style>
 </head>
 <body>
     <h1>Mijn Stream App</h1>
-    <p>Kies een zender om af te spelen in VLC</p>
+    <p>Klik op een zender om VLC Player te openen</p>
     
     <div class="channels">
         <!-- Knop 1: Jouw eigen stream -->
@@ -27,7 +27,7 @@
             Apple Test Stream
         </button>
 
-        <!-- Knop 3: Zelfs de YouTube live link werkt vaak direct in VLC! -->
+        <!-- Knop 3: YouTube link (VLC kan dit vaak vertalen) -->
         <button onclick="playInVLC('https://youtube.com')">
             M1 Híradó (YouTube)
         </button>
@@ -35,14 +35,12 @@
 
     <script>
         function playInVLC(streamUrl) {
-            // We bouwen een speciale Android Intent URL op
-            // Dit dwingt de Android TV stick om de video direct in de VLC app te starten
-            var vlcIntent = "intent://" + streamUrl.replace(/^https?:\/\//, "") + 
-                            "#Intent;scheme=" + (streamUrl.startsWith("https") ? "https" : "http") + 
-                            ";package=org.videolan.vlc;type=video/*;end;";
+            // We vervangen 'http://' of 'https://' simpelweg door 'vlc://'
+            // Dit snapt elke browser en stuurt de link direct door naar de VLC app
+            var vlcUrl = streamUrl.replace(/^https?:\/\//, "vlc://");
             
-            // Stuur de browser door naar deze link
-            window.location.href = vlcIntent;
+            // Open de link
+            window.location.href = vlcUrl;
         }
 
         // Service Worker registreren voor PWA
