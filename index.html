@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mijn TV App (VLC-Lijst)</title>
+    <title>Mijn TV App</title>
     <link rel="manifest" href="/pitv/manifest.json">
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
         .channels { margin-top: 20px; display: flex; flex-direction: column; align-items: center; }
         button { padding: 15px 30px; margin: 10px; font-size: 20px; cursor: pointer; background: #222; color: #fff; border: 2px solid #444; width: 300px; border-radius: 8px; }
-        button:focus { background: orange; color: black; border-color: #fff; outline: none; }
+        button:focus { background: red; color: white; outline: none; } /* Focus voor TV-afstandsbediening */
     </style>
 </head>
 <body>
+
     <h1>Mijn Stream App</h1>
-    <p>Selecteer een zender om te openen in VLC</p>
+    <p>Kies een zender om te kijken via VLC:</p>
     
     <div class="channels">
-        <button onclick="downloadM3U('Lava 1', 'http://smart-hdip.com')">Lava 1 Stream</button>
-        <button onclick="downloadM3U('Apple Test', 'https://apple.com')">Apple Test Stream</button>
-        <button onclick="downloadM3U('M1 Hirado', 'https://youtube.com')">M1 Híradó</button>
+        <!-- Knop 1: Jouw eigen stream -->
+        <button onclick="openInVLC('http://smart-hdip.com')">
+            Lava 1 Stream
+        </button>
+        
+        <!-- Knop 2: Apple Test Stream -->
+        <button onclick="openInVLC('https://apple.com')">
+            Apple Test Stream
+        </button>
     </div>
 
     <script>
-        function downloadM3U(name, url) {
-            // We bouwen een virtueel IPTV bestand (M3U) op in het geheugen
-            var m3uContent = "#EXTM3U\n#EXTINF:-1," + name + "\n" + url;
-            var blob = new Blob([m3uContent], { type: "audio/x-mpegurl" });
+        function openInVLC(streamUrl) {
+            // Dit is de officiële Google Play link-structuur. 
+            // TV-browsers herkennen dit wél en sturen de video direct door naar de VLC app!
+            var vlcPlayLink = "https://google.com" + encodeURIComponent(streamUrl);
             
-            // Maak een onzichtbare downloadlink aan
-            var link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = name + ".m3u";
-            
-            // Klik er automatisch op
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Open de stream
+            window.location.href = vlcPlayLink;
         }
 
+        // Service Worker voor PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/pitv/sw.js');
         }
     </script>
+
 </body>
 </html>
