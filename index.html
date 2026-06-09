@@ -6,13 +6,12 @@
     <title>Mijn TV App</title>
     <link rel="manifest" href="/pitv/manifest.json">
     
-    <!-- Video.js bestanden (Hls.js is hier verwijderd om conflicten te voorkomen) -->
-    <link href="https://zencdn.net" rel="stylesheet" />
-    <script src="https://zencdn.net"></script>
-  
+    <!-- Clappr laadt alles in via één enkele regel internetcode -->
+    <script type="text/javascript" src="https://jsdelivr.net"></script>
+    
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
-        .video-container { width: 80%; max-width: 800px; margin: 0 auto; border: 2px solid #333; }
+        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; }
+        #player { width: 80%; max-width: 800px; margin: 20px auto; border: 2px solid #333; }
         .channels { margin-top: 20px; }
         button { padding: 10px 20px; margin: 5px; font-size: 18px; cursor: pointer; background: #222; color: #fff; border: 1px solid #444; }
         button:focus { background: red; color: white; outline: none; } /* Cruciaal voor TV-afstandsbediening! */
@@ -21,41 +20,45 @@
 <body>
     <h1>Mijn Stream App</h1>
     
-    <!-- Het Video.js element krijgt vjs-16-9 mee voor de juiste TV-verhouding -->
-    <div class="video-container">
-        <video id="my-video" class="video-js vjs-default-skin vjs-16-9" controls preload="auto" width="100%">
-            <p class="vjs-no-js">Je browser ondersteunt geen JavaScript.</p>
-        </video>
-    </div>
+    <!-- De videospeler wordt hier automatisch in opgebouwd -->
+    <div id="player"></div>
 
     <div class="channels">
-        <!-- TESTKNOP 1: Een werkende IPTV stream link -->
-        <button onclick="playStream('http://smart-hdip.com:6204/lava1/lava1/8568')">
-            Lava 1 Stream
-        </button>
-        
-        <!-- TESTKNOP 2: De officiële Apple Test link die altijd online is -->
+        <!-- TESTKNOP 1: De Apple Test link die altijd online is -->
         <button onclick="playStream('https://apple.com')">
             Apple Test Stream
+        </button>
+        
+        <!-- TESTKNOP 2: Jouw eigen stream -->
+        <button onclick="playStream('http://smart-hdip.com')">
+            Lava 1 Stream
         </button>
     </div>
 
     <script>
-        // Initialiseer Video.js
-        var player = videojs('my-video');
-        
-        // Functie om een nieuwe stream te starten wanneer je op een knop drukt
+        var player;
+
         function playStream(url) {
-            player.src({
-                src: url,
-                type: 'application/x-mpegURL' // Dit vertelt Video.js dat het om een M3U8/IPTV stream gaat
+            // Als de speler al bestaat, vernietigen we hem eerst om de nieuwe stream netjes te laden
+            if (player) {
+                player.destroy();
+            }
+
+            // Maak een nieuwe Clappr speler aan
+            player = new Clappr.Player({
+                source: url,
+                parentId: "#player",
+                baseUrl: 'https://jsdelivr.net',
+                autoPlay: true,
+                mute: true, // Helpt bij het omzeilen van de autoplay-blokkade op TV-browsers
+                width: '100%',
+                height: '100%'
             });
-            player.play();
         }
 
-        // Zorg dat de eerste stream automatisch start zodra de pagina klaar is
+        // Start automatisch met de stabiele Apple Test stream zodra de app opent
         window.addEventListener('DOMContentLoaded', function() {
-            playStream('http://smart-hdip.com:6204/lava1/lava1/8568');
+            playStream('https://apple.com');
         });
 
         // Service Worker registreren voor PWA
