@@ -3,63 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mijn TV App</title>
+    <title>Mijn TV App (VLC)</title>
     <link rel="manifest" href="/pitv/manifest.json">
-    
-    <!-- Clappr laadt alles in via één enkele regel internetcode -->
-    <script type="text/javascript" src="https://jsdelivr.net"></script>
-    
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; }
-        #player { width: 80%; max-width: 800px; margin: 20px auto; border: 2px solid #333; }
-        .channels { margin-top: 20px; }
-        button { padding: 10px 20px; margin: 5px; font-size: 18px; cursor: pointer; background: #222; color: #fff; border: 1px solid #444; }
-        button:focus { background: red; color: white; outline: none; } /* Cruciaal voor TV-afstandsbediening! */
+        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .channels { margin-top: 20px; display: flex; flex-direction: column; align-items: center; }
+        button { padding: 15px 30px; margin: 10px; font-size: 20px; cursor: pointer; background: #222; color: #fff; border: 2px solid #444; width: 300px; border-radius: 8px; }
+        button:focus { background: orange; color: black; border-color: #fff; outline: none; } /* Oranje VLC-kleur voor TV-focus */
     </style>
 </head>
 <body>
     <h1>Mijn Stream App</h1>
+    <p>Kies een zender om af te spelen in VLC</p>
     
-    <!-- De videospeler wordt hier automatisch in opgebouwd -->
-    <div id="player"></div>
-
     <div class="channels">
-        <!-- TESTKNOP 1: De Apple Test link die altijd online is -->
-        <button onclick="playStream('https://apple.com')">
-            Apple Test Stream
+        <!-- Knop 1: Jouw eigen stream -->
+        <button onclick="playInVLC('http://smart-hdip.com')">
+            Lava 1 Stream
         </button>
         
-        <!-- TESTKNOP 2: Jouw eigen stream -->
-        <button onclick="playStream('http://smart-hdip.com')">
-            Lava 1 Stream
+        <!-- Knop 2: Apple Test Stream -->
+        <button onclick="playInVLC('https://apple.com')">
+            Apple Test Stream
+        </button>
+
+        <!-- Knop 3: Zelfs de YouTube live link werkt vaak direct in VLC! -->
+        <button onclick="playInVLC('https://youtube.com')">
+            M1 Híradó (YouTube)
         </button>
     </div>
 
     <script>
-        var player;
-
-        function playStream(url) {
-            // Als de speler al bestaat, vernietigen we hem eerst om de nieuwe stream netjes te laden
-            if (player) {
-                player.destroy();
-            }
-
-            // Maak een nieuwe Clappr speler aan
-            player = new Clappr.Player({
-                source: url,
-                parentId: "#player",
-                baseUrl: 'https://jsdelivr.net',
-                autoPlay: true,
-                mute: true, // Helpt bij het omzeilen van de autoplay-blokkade op TV-browsers
-                width: '100%',
-                height: '100%'
-            });
+        function playInVLC(streamUrl) {
+            // We bouwen een speciale Android Intent URL op
+            // Dit dwingt de Android TV stick om de video direct in de VLC app te starten
+            var vlcIntent = "intent://" + streamUrl.replace(/^https?:\/\//, "") + 
+                            "#Intent;scheme=" + (streamUrl.startsWith("https") ? "https" : "http") + 
+                            ";package=org.videolan.vlc;type=video/*;end;";
+            
+            // Stuur de browser door naar deze link
+            window.location.href = vlcIntent;
         }
-
-        // Start automatisch met de stabiele Apple Test stream zodra de app opent
-        window.addEventListener('DOMContentLoaded', function() {
-            playStream('https://apple.com');
-        });
 
         // Service Worker registreren voor PWA
         if ('serviceWorker' in navigator) {
