@@ -7,6 +7,9 @@
     <link rel="manifest" href="/pitv/manifest.json">
     <!-- CRUCIALE LINK: Dit laadt de lokale videospeler in die je in de vorige stap hebt gedownload -->
     <script src="hls.js"></script>
+        <!-- De <source> tag is weggehaald; JavaScript regelt nu het inladen bij de start -->
+    <link href="video-js.css" rel="stylesheet" />
+    <script src="video.min.js"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         video { width: 80%; max-width: 800px; border: 2px solid #333; }
@@ -18,9 +21,7 @@
 <body>
     <h1>Mijn Stream App</h1>
     
-    <!-- De <source> tag is weggehaald; JavaScript regelt nu het inladen bij de start -->
-    <link href="video-js.css" rel="stylesheet" />
-    <script src="video.min.js"></script>
+
 
     <video id="my-video" class="video-js vjs-default-skin" controls data-setup="{}">
         <source src="jouw-stream.m3u8" type="application/x-mpegURL">
