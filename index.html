@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mijn TV App</title>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/pitv/manifest.json">
     <script src="https://jsdelivr.net"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
@@ -37,7 +37,7 @@
         }
         // Service Worker registreren voor PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js');
+            navigator.serviceWorker.register('/pitv/sw.js');
         }
     </script>
 </body>
