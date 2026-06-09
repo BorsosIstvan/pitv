@@ -41,39 +41,47 @@
         var hls;
 
         function playStream(url) {
-            // Als er al een video speelt, sluiten we die eerst netjes af
             if (hls) {
                 hls.destroy();
             }
 
             var verwerkteUrl = url;
 
-            // TRUC: Als de link onveilig is (http), sturen we hem via een veilige https-omweg
-            if (url.startsWith('http://')) {
+            // We sturen de stream door een proxy die de CORS-blokkade omzeilt
+            // Dit werkt perfect voor IPTV-links zoals die van jou!
+            if (url.includes('smart-hdip.com') || url.startsWith('http://')) {
                 verwerkteUrl = 'https://corsproxy.io?' + encodeURIComponent(url);
             }
 
-            // Start de Hls.js speler
             if (Hls.isSupported()) {
-                hls = new Hls();
+                hls = new Hls({
+                    xhrSetup: function (xhr, url) {
+                        xhr.withCredentials = false; // Voorkomt extra beveiligingschecks van de browser
+                    }
+                });
                 hls.loadSource(verwerkteUrl);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     video.play().catch(function(error) {
-                        console.log("Autoplay geblokkeerd, druk op play op je afstandsbediening.");
+                        console.log("Autoplay geblokkeerd door TV. Druk op de play-knop.");
                     });
                 });
+                
+                // Foutafhandeling toevoegen om te zien wat er gebeurt
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    console.log("HLS Fout:", data.details);
+                });
+
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = verwerkteUrl;
             }
         }
 
-        // Start automatisch de Apple Test stream op bij het openen
+        // We starten nu DIRECT met jouw eigen stream in plaats van die van Apple!
         window.addEventListener('DOMContentLoaded', function() {
-            playStream('https://apple.com');
+            playStream('http://smart-hdip.com');
         });
 
-        // Service Worker voor PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/pitv/sw.js');
         }
