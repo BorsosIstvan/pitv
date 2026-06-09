@@ -22,7 +22,7 @@
     <video id="video" controls autoplay width="100%"></video>
 
     <div class="channels">
-        <button onclick="playStream('https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8')">
+        <button onclick="playStream('https://fixhd.tv:8082/fix/1080i/playlist.m3u8')">
             Test Apple Stream
         </button>
     </div>
@@ -48,7 +48,7 @@
 
         // Zorg dat de teststream automatisch start zodra de pagina opent
         window.addEventListener('DOMContentLoaded', function() {
-            playStream('https://cdn.mediaklikk.org:443/rtl/00wMyEjM5UTM');
+            playStream('https://fixhd.tv:8082/fix/1080i/playlist.m3u8');
         });
 
         // Service Worker registreren voor PWA
