@@ -45,41 +45,27 @@
                 hls.destroy();
             }
 
-            var verwerkteUrl = url;
-
-            // We sturen de stream door een proxy die de CORS-blokkade omzeilt
-            // Dit werkt perfect voor IPTV-links zoals die van jou!
-            if (url.includes('smart-hdip.com') || url.startsWith('http://')) {
-                verwerkteUrl = 'https://corsproxy.io?' + encodeURIComponent(url);
-            }
-
             if (Hls.isSupported()) {
-                hls = new Hls({
-                    xhrSetup: function (xhr, url) {
-                        xhr.withCredentials = false; // Voorkomt extra beveiligingschecks van de browser
-                    }
-                });
-                hls.loadSource(verwerkteUrl);
+                hls = new Hls();
+                hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     video.play().catch(function(error) {
-                        console.log("Autoplay geblokkeerd door TV. Druk op de play-knop.");
+                        console.log("Autoplay geblokkeerd. Klik op de video.");
                     });
                 });
                 
-                // Foutafhandeling toevoegen om te zien wat er gebeurt
                 hls.on(Hls.Events.ERROR, function (event, data) {
                     console.log("HLS Fout:", data.details);
                 });
-
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = verwerkteUrl;
+                video.src = url;
             }
         }
 
-        // We starten nu DIRECT met jouw eigen stream in plaats van die van Apple!
+        // We laden nu de stream RECHTSTREEKS vanaf jouw eigen Raspberry Pi proxy!
         window.addEventListener('DOMContentLoaded', function() {
-            playStream('http://smart-hdip.com');
+            playStream('/stream-lava');
         });
 
         if ('serviceWorker' in navigator) {
