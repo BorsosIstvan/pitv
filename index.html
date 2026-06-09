@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mijn TV App</title>
-    <link rel="manifest" href="/pitv/manifest.json">
-    <!-- CRUCIALE LINK: Dit laadt de lokale videospeler in die je in de vorige stap hebt gedownload -->
-    <script src="hls.js"></script>
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://jsdelivr.net"></script>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; text-align: center; }
         video { width: 80%; max-width: 800px; border: 2px solid #333; }
@@ -17,43 +16,28 @@
 </head>
 <body>
     <h1>Mijn Stream App</h1>
-    
-    <!-- De <source> tag is weggehaald; JavaScript regelt nu het inladen bij de start -->
-    <video id="video" controls autoplay width="100%"></video>
+    <video id="video" controls></video>
 
     <div class="channels">
-        <button onclick="playStream('https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8')">
-            Test Apple Stream
-        </button>
+        <button onclick="playStream('https:// canaal-link-hier /stream.m3u8')">Zender 1</button>
     </div>
 
     <script>
         var video = document.getElementById('video');
-        
         function playStream(url) {
-            // Controleer of de Hls-bibliotheek succesvol is geladen
-            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+            if (Hls.isSupported()) {
                 var hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Voor browsers die het standaard ondersteunen (zoals Safari/sommige TV-browsers)
                 video.src = url;
                 video.addEventListener('loadedmetadata', function() { video.play(); });
-            } else {
-                alert('Fout: De videospeler (Hls.js) kon niet worden geladen.');
             }
         }
-
-        // Zorg dat de teststream automatisch start zodra de pagina opent
-        window.addEventListener('DOMContentLoaded', function() {
-            playStream('https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8');
-        });
-
         // Service Worker registreren voor PWA
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/pitv/sw.js');
+            navigator.serviceWorker.register('/sw.js');
         }
     </script>
 </body>
