@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiTV Livestream</title>
+    <!-- Laad de HLS.js bibliotheek vanaf een betrouwbare CDN -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .video-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>PiTV Live Player</h1>
+    
+    <div class="video-container">
+        <!-- De video tag met standaard controls en autoplay (muted i.v.m. browserregels) -->
+        <video id="video" controls autoplay muted playsinline></video>
+    </div>
+
+    <script>
+        // De specifieke m3u8 livestream URL
+        const streamUrl = 'https://c201-node61-cdn.connectmedia.hu/110102/7184521041cf54cee9c6548e8d0ba377/64117799/index.m3u8';
+        const video = document.getElementById('video');
+
+        if (Hls.isSupported()) {
+            // Voor moderne browsers zoals Chrome, Firefox, Edge en Opera
+            const hls = new Hls();
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+        } 
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Ingebouwde HLS-ondersteuning voor Safari (iOS en Mac)
+            video.src = streamUrl;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        } else {
+            alert('Je browser ondersteunt helaas geen HLS-livestreams.');
+        }
+    </script>
+
+</body>
+</html>
